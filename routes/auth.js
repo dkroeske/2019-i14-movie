@@ -80,7 +80,6 @@ router.post("/login", function(req, res, next) {
       if (err) {
         next(err);
       } else {
-        console.table(rows);
         if (
           rows.length === 1 &&
           bcrypt.compareSync(req.body.password, rows[0].password)

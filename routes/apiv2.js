@@ -1,11 +1,9 @@
 const express = require("express");
 const assert = require("assert");
 const router = express.Router();
-const Movies = require("../models/movies");
+const Movie = require("../models/movie");
 const jwt = require("../helpers/jwt");
-
-const _movies = new Movies();
-const saltRounds = 10;
+const db = require("../db/mysql-connector");
 
 // Check voor alle endpoints het token
 router.all("*", function(req, res, next) {
@@ -26,32 +24,133 @@ router.all("*", function(req, res, next) {
   });
 });
 
-//
-// Get all movies
-//
-router.get("/movies", function(req, res, next) {
-  _movies.readAll((err, result) => {
-    if (err) {
-      res.status(500).json(err.toString());
-    } else {
-      res.status(200).json(result);
+
+// Get alle bekeken movies voor alle gebruikers
+//router.get("/summary/:user", (req, res, next) => {
+router.get("/summary", (req, res, next) => {
+
+    //const user = req.params.user || ''
+    const user =  req.query.user || ''
+
+
+    // Construct query object
+    const query = {
+      sql: `
+        SELECT u.username, m.titel
+        FROM user as u, movie as m, user_movie as um
+        WHERE u.iduser = um.user_id AND m.idmovie = um.movie_id AND u.username=?;
+      `,
+      values: [user],
+      timeout: 2000
+    };
+
+    try {
+      db.query(query, (err, rows, fields) => {
+        if(err) { 
+          next(err)
+        } else {
+          try {
+            res.status(200).json(rows)
+            // let movies = []
+            // rows.forEach( (element) => {
+            //   movies.push(new Movie(element.titel, element.jaar, element.rating))
+            // })
+            // res.status(200).json(movies)
+          } catch(err) {
+            next(err)
+          }
+          //res.status(200).json(rows)
+        }
+      })
+    } catch(err) {
+      next(err)
     }
-  });
+});
+
+
+//Get all movies
+
+router.get("/movies/:year", function(req, res, next) {
+  
+  const year = req.params.year || ''
+
+  try {
+
+    // Construct query object
+    const query = {
+      sql: "SELECT `titel`, `jaar`, `rating` FROM movie WHERE `jaar`= ?;",
+      values: [year],
+      timeout: 2000
+    };
+
+    // Perform query
+    db.query(query, (err, rows, fields) => {
+      if (err) {
+        next(err);
+      } else {
+        try {
+          let movies = [];
+          rows.forEach(element => {
+            movies.push(new Movie(element.titel, element.jaar, element.rating))
+          });
+          res.status(200).json(movies);
+
+        } catch(err) {
+          next(err)
+        }
+      }
+    });
+  } catch (ex) {
+    next(ex);
+  }
 });
 
 //
 // Get movie by id
 //
-router.get("/movies/:id", function(req, res, next) {
-  const id = req.query.id || "";
+router.get("/movies", function(req, res, next) {
+  
+  const year = req.query.year || '';
 
-  _movies.read(id, (err, result) => {
-    if (err) {
-      res.status(500).json(err.toString());
+  try {
+     
+    let query = {};
+
+    if( year === '') {
+      // Construct query object
+      query = {
+        sql: "SELECT `titel`, `jaar`, `rating` FROM movie;",
+        values: [year],
+        timeout: 2000
+      };
     } else {
-      res.status(200).json(result);
+      query = {
+        sql: "SELECT `titel`, `jaar`, `rating` FROM movie WHERE `jaar`=?;",
+        values: [year],
+        timeout: 2000
+      };
     }
-  });
+      
+    // Perform query
+    db.query(query, (err, rows, fields) => {
+      if (err) {
+        next(err);
+      } else {
+        try {
+          let movies = [];
+          rows.forEach(element => {
+            movies.push(new Movie(element.titel, element.jaar, element.rating))
+          });
+          res.status(200).json(movies);
+        } catch(err) {
+          next(err)
+        }
+      }
+    });
+  } catch(err) {
+    next(err)
+  }
+
 });
 
 //

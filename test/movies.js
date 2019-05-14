@@ -55,7 +55,7 @@ describe('Movies', () => {
         chai.request(server)
             .get('/apiv2/lkjlkjfdsldkfjsl')
             .end(function (err, res) {
-                res.should.have.status(200);
+                res.should.have.status(500);
                 res.body.should.be.a('object');
                 done();
             })
