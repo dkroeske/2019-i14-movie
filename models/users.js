@@ -1,8 +1,9 @@
 class User {
+  
   constructor(email, password, username) {
     (this.email = this.validateEmail(email)),
-      (this.password = this.validatePassword(password)),
-      (this.username = this.validateUsername(username));
+    (this.password = this.validatePassword(password)),
+    (this.username = this.validateUsername(username));
   }
 
   // Needs to be private ?

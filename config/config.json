@@ -1,18 +1,26 @@
 {
   "local": {
-    "secretkey": "MyServerSuperSecretKey-123454321AbCd-",
-    "dbUsername": "i14",
-    "dbPassword": "i14",
-    "dbSchema": "i14",
-    "dbServer": "localhost",
-    "port": "8080"
+    "db" : {
+      "username": "i14",
+      "password": "i14",
+      "schema": "i14",
+      "server": "localhost"
+    },
+    "app": {
+      "secretkey": "MyServerSuperSecretKey-123454321AbCd-",
+      "port": "8080"
+    }
   },
   "remote": {
-    "secretkey": "MyServerSuperSecretKey-123454321AbCd-",
-    "dbUsername": "i14",
-    "dbPassword": "*8hh5XaK*{nG3JZA9{3A_:}Wa[%dGKn<",
-    "dbSchema": "i14",
-    "dbServer": "94.208.51.54",
-    "port": "8080"
+    "db" : {
+      "username": "i14",
+      "password": "*8hh5XaK*{nG3JZA9{3A_:}Wa[%dGKn<",
+      "schema": "i14",
+      "server": "coolsma.synology.me"
+    },
+    "app": {
+      "secretkey": "MyServerSuperSecretKey-123454321AbCd-",
+      "port": "8080"
+    }
   }
 }

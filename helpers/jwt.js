@@ -13,7 +13,7 @@ function encodeToken(username) {
     iat: moment().unix(),
     sub: username
   };
-  return jwt.encode(playload, settings.remote.secretkey);
+  return jwt.encode(playload, settings.remote.app.secretkey);
 }
 
 //
@@ -21,12 +21,13 @@ function encodeToken(username) {
 //
 function decodeToken(token, cb) {
   try {
-    const payload = jwt.decode(token, settings.remote.secretkey);
+    const payload = jwt.decode(token, settings.remote.app.secretkey);
 
     // Check if the token has expired
     if (moment().unix() > payload.exp) {
       cb(new Error("token_has_expired"));
     } else {
+      payload.email = 'dkroeske@gmail.com'
       cb(null, payload);
     }
   } catch (err) {
